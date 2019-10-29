@@ -1,0 +1,22 @@
+image:
+  repository: aylei/aliyun-exporter
+  tag: 0.3.1
+  pullPolicy: "IfNotPresent"
+  pullSecrets: false
+
+replicaCount: 1
+podAnnotations: {}
+
+aliyunAccessId: ""
+aliyunAccessSecret: ""
+aliyunRegion: cn-hanghzou
+
+service:
+  type: ClusterIP
+  labels: []
+  annotations: []
+  selector: []
+
+servicemonitor:
+  labels:
+    prometheus-monitoring: "true"

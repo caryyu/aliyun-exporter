@@ -1,0 +1,4 @@
+The Aliyun Exporter has been installed. Check status by running:
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ template "aliyun-exporter.name" . }} 9525:9525
+
+Visit http://localhost:9525/ to open the site.

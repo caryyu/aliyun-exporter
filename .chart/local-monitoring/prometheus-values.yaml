@@ -1,0 +1,31 @@
+prometheusOperator:
+  createCustomResource: false
+defaultRules:
+  rules:
+    kubeScheduler: false
+    etcd: false
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+
+prometheus:
+  prometheusSpec:
+    retention: 1d
+    externalLabels:
+      cluster: "local"
+    serviceMonitorSelector:
+      matchLabels:
+        prometheus-monitoring: "true"
+    ruleSelector:
+      matchLabels:
+        prometheus-monitoring: "true"
+    ruleNamespaceSelector:
+      any: true
+    serviceMonitorNamespaceSelector:
+      any: true
+
+grafana:
+  defaultDashboardsEnabled: false
+  service:
+    type: LoadBalancer
