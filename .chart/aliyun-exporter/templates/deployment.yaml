@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "aliyun-exporter.fullname" . }}
+  labels:
+    app: {{ template "aliyun-exporter.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "aliyun-exporter.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations: 
+        checksum/config: {{ include (print $.Template.BasePath "/configs.yaml") . | sha256sum }}
+{{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        app: {{ template "aliyun-exporter.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end}}
+      {{- end }}
+      containers:
+      - name: {{ template "aliyun-exporter.name" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        args: 
+          - '-p'
+          - '9525'
+          - '-c'
+          - '/etc/aliyun-exporter/aliyun-exporter.yaml'
+        ports:
+          - name: {{ template "aliyun-exporter.name" . }}
+            containerPort: 9525
+        env:
+          - name: "ALIYUN_ACCESS_ID"
+            value: {{ .Values.aliyunAccessId | quote }}
+          - name: "ALIYUN_ACCESS_SECRET"
+            value: {{ .Values.aliyunAccessSecret | quote }}
+          - name: "ALIYUN_REGION"
+            value: {{ .Values.aliyunRegion | quote }}
+        volumeMounts:
+          - mountPath: /etc/aliyun-exporter/
+            name: aliyun-exporter-config
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9525
+          initialDelaySeconds: 5
+          periodSeconds: 60
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9525
+          initialDelaySeconds: 5
+          periodSeconds: 60
+      volumes:
+        - name: aliyun-exporter-config
+          configMap:
+            name: aliyun-exporter-config

@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "aliyun-exporter.fullname" . }}
+  labels:
+    app: {{ template "aliyun-exporter.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  {{- range $key, $value := .Values.servicemonitor.labels }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+spec:
+  jobLabel: {{ template "aliyun-exporter.name" . }}
+  selector:
+    matchLabels:
+      app: {{ template "aliyun-exporter.name" . }}
+  namespaceSelector:
+    any: true
+  endpoints:
+  - port: {{ template "aliyun-exporter.name" . }}
+    path: /metrics
+    interval: 60s
+    scrapeTimeout: 60s

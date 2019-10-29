@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aliyun-exporter-config
+  labels:
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  aliyun-exporter.yaml: |-
+{{ .Files.Get "configs/aliyun-exporter.yaml" | indent 4 }}

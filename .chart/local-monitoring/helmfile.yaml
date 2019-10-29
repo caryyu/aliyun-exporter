@@ -1,0 +1,24 @@
+helmDefaults:
+  wait: true
+  timeout: 600
+
+releases:
+  - name: prometheus-operator
+    namespace: default
+    chart: stable/prometheus-operator
+    version: 6.21.0
+    values: 
+      - prometheus-values.yaml
+  - name: aliyun-exporter
+    namespace: default
+    chart: ../aliyun-exporter
+    version: 0.0.1
+    values:
+      - aliyun-exporter-values.yaml
+    set:
+      - name: aliyunAccessId
+        value: {{ requiredEnv "ALIYUN_ACCESS_ID" }}
+      - name: aliyunAccessSecret
+        value: {{ requiredEnv "ALIYUN_ACCESS_SECRET" }}
+      - name: aliyunRegion
+        value: {{ requiredEnv "ALIYUN_REGION" }}
