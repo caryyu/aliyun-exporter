@@ -5,9 +5,11 @@ kind: ConfigMap
 metadata:
   name: grafana-dashboards-{{ base ( trimSuffix ".json" $path) }}
   labels:
-    grafana_dashboard: "True"
     release: {{ $.Release.Name }}
     heritage: {{ $.Release.Service }}
+{{- if $.Values.grafanaDashboardLabels }}
+{{ toYaml $.Values.grafanaDashboardLabels | indent 4 }}
+{{- end }}
 data:
 {{ ($root.Files.Glob $path).AsConfig | indent 2 }}
 ---

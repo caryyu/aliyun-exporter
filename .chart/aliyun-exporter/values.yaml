@@ -20,3 +20,6 @@ service:
 servicemonitor:
   labels:
     prometheus-monitoring: "true"
+
+grafanaDashboardLabels:
+  grafana_dashboard: "True"
