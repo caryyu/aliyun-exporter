@@ -34,6 +34,10 @@ spec:
       - name: {{ template "aliyun-exporter.name" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        command:
+          - 'python'
+          - '-u'
+          - '/usr/local/bin/aliyun-exporter'
         args: 
           - '-p'
           - '9525'
